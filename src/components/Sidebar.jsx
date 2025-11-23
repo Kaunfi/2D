@@ -11,9 +11,6 @@ function Sidebar({ activePage, onNavigate, isCollapsed, onToggle }) {
     <aside className={`sidebar ${isCollapsed ? 'sidebar--collapsed' : ''}`}>
       <div className="sidebar__header">
         <span className="sidebar__brand">nltr</span>
-        <button className="sidebar__toggle" onClick={onToggle} aria-label="Basculer le menu">
-          {isCollapsed ? '›' : '‹'}
-        </button>
       </div>
       <nav className="sidebar__nav">
         {menuItems.map((item) => (
@@ -27,6 +24,12 @@ function Sidebar({ activePage, onNavigate, isCollapsed, onToggle }) {
           </button>
         ))}
       </nav>
+      <div className="sidebar__footer">
+        <button className="sidebar__toggle" onClick={onToggle} aria-label="Basculer le menu">
+          <span className="sidebar__toggle-arrow">{isCollapsed ? '›' : '‹'}</span>
+          <span className="sidebar__toggle-text">{isCollapsed ? 'Ouvrir le menu' : 'Fermer le menu'}</span>
+        </button>
+      </div>
     </aside>
   );
 }
