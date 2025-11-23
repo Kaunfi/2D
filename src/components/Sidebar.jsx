@@ -3,6 +3,7 @@ import React from 'react';
 const menuItems = [
   { key: 'search', label: 'Recherche' },
   { key: 'portfolio', label: 'Portefeuille' },
+  { key: 'stats', label: 'Stats' },
 ];
 
 function Sidebar({ activePage, onNavigate, isCollapsed, onToggle }) {
