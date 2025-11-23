@@ -42,6 +42,7 @@ function PieChart({ title, data, total }) {
       const endAngle = cumulativeAngle;
       const midAngle = startAngle + angle / 2;
       const labelPosition = polarToCartesian(110, 110, 70, midAngle);
+      const iconPosition = polarToCartesian(110, 110, 85, midAngle);
       const percentage = total ? (item.value / total) * 100 : 0;
 
       return {
@@ -50,6 +51,7 @@ function PieChart({ title, data, total }) {
         startAngle,
         endAngle,
         labelPosition,
+        iconPosition,
         percentage,
       };
     });
@@ -74,6 +76,21 @@ function PieChart({ title, data, total }) {
 
               return <path key={key} d={path} fill={item.color} />;
             })}
+            {segments.map(({ key, item, iconPosition }) => (
+              item.image ? (
+                <foreignObject
+                  key={`${key}-icon`}
+                  x={iconPosition.x - 14}
+                  y={iconPosition.y - 14}
+                  width="28"
+                  height="28"
+                >
+                  <div className="pie-chart__icon">
+                    <img src={item.image} alt={item.label} />
+                  </div>
+                </foreignObject>
+              ) : null
+            ))}
             {segments.map(({ key, item, labelPosition, percentage }) => (
               <foreignObject
                 key={`${key}-badge`}
