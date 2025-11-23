@@ -447,6 +447,7 @@
 .pie-chart svg {
   width: 100%;
   height: auto;
+  overflow: visible;
 }
 
 .pie-chart__badge {
