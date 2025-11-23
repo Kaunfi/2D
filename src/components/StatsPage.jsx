@@ -32,18 +32,28 @@ function describeArc(x, y, radius, startAngle, endAngle) {
 }
 
 function PieChart({ title, data, total }) {
-  const segments = [];
-  let cumulativeAngle = 0;
+  const segments = useMemo(() => {
+    let cumulativeAngle = 0;
 
-  data.forEach((item, index) => {
-    const startAngle = cumulativeAngle;
-    const angle = total ? (item.value / total) * 360 : 0;
-    cumulativeAngle += angle;
-    const endAngle = cumulativeAngle;
-    const midAngle = startAngle + angle / 2;
-    const labelPosition = polarToCartesian(110, 110, 70, midAngle);
-    segments.push({ key: `${item.label}-${index}`, item, startAngle, endAngle, labelPosition });
-  });
+    return data.map((item, index) => {
+      const startAngle = cumulativeAngle;
+      const angle = total ? (item.value / total) * 360 : 0;
+      cumulativeAngle += angle;
+      const endAngle = cumulativeAngle;
+      const midAngle = startAngle + angle / 2;
+      const labelPosition = polarToCartesian(110, 110, 70, midAngle);
+      const percentage = total ? (item.value / total) * 100 : 0;
+
+      return {
+        key: `${item.label}-${index}`,
+        item,
+        startAngle,
+        endAngle,
+        labelPosition,
+        percentage,
+      };
+    });
+  }, [data, total]);
 
   return (
     <div className="stat-card">
@@ -64,7 +74,7 @@ function PieChart({ title, data, total }) {
 
               return <path key={key} d={path} fill={item.color} />;
             })}
-            {segments.map(({ key, item, labelPosition }) => (
+            {segments.map(({ key, item, labelPosition, percentage }) => (
               <foreignObject
                 key={`${key}-badge`}
                 x={labelPosition.x - 60}
@@ -74,25 +84,16 @@ function PieChart({ title, data, total }) {
               >
                 <div className="pie-chart__badge">
                   {item.image && <img src={item.image} alt={item.label} />}
-                  <span>{item.symbol ? item.symbol.toUpperCase() : item.label}</span>
+                  <div className="pie-chart__badge-text">
+                    <span className="pie-chart__badge-symbol">
+                      {item.symbol ? item.symbol.toUpperCase() : item.label}
+                    </span>
+                    <span className="pie-chart__badge-percentage">{percentage.toFixed(1)}%</span>
+                  </div>
                 </div>
               </foreignObject>
             ))}
           </svg>
-          <div className="pie-chart__legend">
-            {data.map((item) => {
-              const percentage = total ? ((item.value / total) * 100).toFixed(1) : '0.0';
-              return (
-                <div className="legend-row" key={item.label}>
-                  <span className="legend-color" style={{ backgroundColor: item.color }} />
-                  <div>
-                    <div className="legend-label">{item.label}</div>
-                    <div className="legend-value">{percentage}%</div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
       )}
     </div>
