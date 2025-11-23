@@ -32,6 +32,11 @@ function describeArc(x, y, radius, startAngle, endAngle) {
 }
 
 function PieChart({ title, data, total }) {
+  const centerX = 160;
+  const centerY = 130;
+  const radius = 92;
+  const labelWidth = 140;
+
   const segments = useMemo(() => {
     let cumulativeAngle = 0;
 
@@ -41,21 +46,29 @@ function PieChart({ title, data, total }) {
       cumulativeAngle += angle;
       const endAngle = cumulativeAngle;
       const midAngle = startAngle + angle / 2;
-      const labelPosition = polarToCartesian(110, 110, 70, midAngle);
-      const iconPosition = polarToCartesian(110, 110, 85, midAngle);
+      const iconPosition = polarToCartesian(centerX, centerY, radius * 0.75, midAngle);
+      const perimeterPoint = polarToCartesian(centerX, centerY, radius, midAngle);
+      const outerPoint = polarToCartesian(centerX, centerY, radius + 12, midAngle);
       const percentage = total ? (item.value / total) * 100 : 0;
+      const isRight = Math.cos(((midAngle - 90) * Math.PI) / 180) >= 0;
+      const labelX = isRight ? outerPoint.x + 14 : outerPoint.x - labelWidth - 14;
+      const labelY = outerPoint.y - 16;
+      const connectorEndX = isRight ? labelX : labelX + labelWidth;
 
       return {
         key: `${item.label}-${index}`,
         item,
         startAngle,
         endAngle,
-        labelPosition,
         iconPosition,
+        perimeterPoint,
+        outerPoint,
+        connectorEnd: { x: connectorEndX, y: outerPoint.y },
+        labelBox: { x: labelX, y: labelY },
         percentage,
       };
     });
-  }, [data, total]);
+  }, [centerX, centerY, data, labelWidth, radius, total]);
 
   return (
     <div className="stat-card">
@@ -70,12 +83,21 @@ function PieChart({ title, data, total }) {
         <div className="muted stat-card__empty">Aucune donnée à afficher.</div>
       ) : (
         <div className="pie-chart">
-          <svg viewBox="0 0 220 220" role="img" aria-label={title}>
+          <svg viewBox="0 0 360 260" role="img" aria-label={title}>
             {segments.map(({ key, item, startAngle, endAngle }) => {
-              const path = describeArc(110, 110, 100, startAngle, endAngle);
+              const path = describeArc(centerX, centerY, radius, startAngle, endAngle);
 
               return <path key={key} d={path} fill={item.color} />;
             })}
+            {segments.map(({ key, perimeterPoint, outerPoint, connectorEnd }) => (
+              <polyline
+                key={`${key}-connector`}
+                points={`${perimeterPoint.x},${perimeterPoint.y} ${outerPoint.x},${outerPoint.y} ${connectorEnd.x},${connectorEnd.y}`}
+                fill="none"
+                stroke="#e0e7ef"
+                strokeWidth="2"
+              />
+            ))}
             {segments.map(({ key, item, iconPosition }) => (
               item.image ? (
                 <foreignObject
@@ -91,13 +113,13 @@ function PieChart({ title, data, total }) {
                 </foreignObject>
               ) : null
             ))}
-            {segments.map(({ key, item, labelPosition, percentage }) => (
+            {segments.map(({ key, item, percentage, labelBox }) => (
               <foreignObject
                 key={`${key}-badge`}
-                x={labelPosition.x - 60}
-                y={labelPosition.y - 16}
-                width="120"
-                height="32"
+                x={labelBox.x}
+                y={labelBox.y}
+                width={labelWidth}
+                height="36"
               >
                 <div className="pie-chart__badge">
                   {item.image && <img src={item.image} alt={item.label} />}
