@@ -32,7 +32,18 @@ function describeArc(x, y, radius, startAngle, endAngle) {
 }
 
 function PieChart({ title, data, total }) {
+  const segments = [];
   let cumulativeAngle = 0;
+
+  data.forEach((item, index) => {
+    const startAngle = cumulativeAngle;
+    const angle = total ? (item.value / total) * 360 : 0;
+    cumulativeAngle += angle;
+    const endAngle = cumulativeAngle;
+    const midAngle = startAngle + angle / 2;
+    const labelPosition = polarToCartesian(110, 110, 70, midAngle);
+    segments.push({ key: `${item.label}-${index}`, item, startAngle, endAngle, labelPosition });
+  });
 
   return (
     <div className="stat-card">
@@ -48,15 +59,25 @@ function PieChart({ title, data, total }) {
       ) : (
         <div className="pie-chart">
           <svg viewBox="0 0 220 220" role="img" aria-label={title}>
-            {data.map((item, index) => {
-              const startAngle = cumulativeAngle;
-              const angle = (item.value / total) * 360;
-              cumulativeAngle += angle;
-              const endAngle = cumulativeAngle;
+            {segments.map(({ key, item, startAngle, endAngle }) => {
               const path = describeArc(110, 110, 100, startAngle, endAngle);
 
-              return <path key={item.label} d={path} fill={item.color} />;
+              return <path key={key} d={path} fill={item.color} />;
             })}
+            {segments.map(({ key, item, labelPosition }) => (
+              <foreignObject
+                key={`${key}-badge`}
+                x={labelPosition.x - 60}
+                y={labelPosition.y - 16}
+                width="120"
+                height="32"
+              >
+                <div className="pie-chart__badge">
+                  {item.image && <img src={item.image} alt={item.label} />}
+                  <span>{item.symbol ? item.symbol.toUpperCase() : item.label}</span>
+                </div>
+              </foreignObject>
+            ))}
           </svg>
           <div className="pie-chart__legend">
             {data.map((item) => {
@@ -96,6 +117,7 @@ function StatsTable({ rows }) {
             <th>Valeur actuelle (EUR)</th>
             <th>Variation 24h</th>
             <th>P/L</th>
+            <th>P/L (%)</th>
           </tr>
         </thead>
         <tbody>
@@ -103,6 +125,7 @@ function StatsTable({ rows }) {
             const invested = Number(token.invested) || 0;
             const currentValue = (Number(token.quantity) || 0) * (Number(token.currentPrice) || 0);
             const profit = currentValue - invested;
+            const profitPercent = invested > 0 ? (profit / invested) * 100 : null;
             return (
               <tr key={token.id}>
                 <td className="asset-cell">
@@ -123,6 +146,9 @@ function StatsTable({ rows }) {
                   </span>
                 </td>
                 <td className={profit >= 0 ? 'positive' : 'negative'}>{formatUsd(profit)}</td>
+                <td className={profit >= 0 ? 'positive' : 'negative'}>
+                  {profitPercent !== null ? `${profitPercent.toFixed(2)}%` : '—'}
+                </td>
               </tr>
             );
           })}
@@ -149,6 +175,8 @@ function StatsPage({ portfolio }) {
       label: token.name,
       value: (Number(token.quantity) || 0) * (Number(token.currentPrice) || 0),
       color: colors[index % colors.length],
+      image: token.image,
+      symbol: token.symbol,
     }));
   }, [portfolio]);
 
@@ -157,6 +185,8 @@ function StatsPage({ portfolio }) {
       label: token.name,
       value: Number(token.invested) || 0,
       color: colors[index % colors.length],
+      image: token.image,
+      symbol: token.symbol,
     }));
   }, [portfolio]);
 
