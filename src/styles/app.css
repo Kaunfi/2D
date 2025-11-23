@@ -350,6 +350,134 @@
   border: 1px solid #e3e7ed;
 }
 
+.stats-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+}
+
+.stat-card {
+  border: 1px solid #e3e7ed;
+  border-radius: 14px;
+  padding: 16px;
+  background: linear-gradient(180deg, #fdfefe, #f6f8fb);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.stat-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.pie-chart {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.pie-chart svg {
+  width: 100%;
+  height: auto;
+}
+
+.pie-chart__legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legend-label {
+  font-weight: 600;
+}
+
+.legend-value {
+  color: #5b6a7a;
+  font-size: 13px;
+}
+
+.stat-card__empty {
+  padding: 10px;
+  border: 1px dashed #d9e2ec;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stats-table__title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e3e7ed;
+}
+
+.stats-table th {
+  font-size: 14px;
+  color: #5b6a7a;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.stats-table tr:hover {
+  background: #f8fafc;
+}
+
+.asset-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.asset-cell img {
+  width: 32px;
+  height: 32px;
+}
+
+.asset-name {
+  font-weight: 600;
+}
+
+.asset-symbol {
+  color: #5b6a7a;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
 .positive {
   color: #0c8b55;
 }

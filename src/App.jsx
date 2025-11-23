@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import SearchPage from './components/SearchPage.jsx';
 import PortfolioPage from './components/PortfolioPage.jsx';
+import StatsPage from './components/StatsPage.jsx';
 import './styles/app.css';
 
 const COINGECKO_API = 'https://api.coingecko.com/api/v3';
@@ -127,15 +128,11 @@ function App() {
           </div>
         </header>
         {error && <div className="error-banner">{error}</div>}
-        {activePage === 'search' ? (
-          <SearchPage onAddToken={handleAddToken} existingIds={tokenIds} />
-        ) : (
-          <PortfolioPage
-            portfolio={portfolio}
-            onUpdate={updateHolding}
-            onRemove={removeToken}
-          />
+        {activePage === 'search' && <SearchPage onAddToken={handleAddToken} existingIds={tokenIds} />}
+        {activePage === 'portfolio' && (
+          <PortfolioPage portfolio={portfolio} onUpdate={updateHolding} onRemove={removeToken} />
         )}
+        {activePage === 'stats' && <StatsPage portfolio={portfolio} />}
       </main>
     </div>
   );
