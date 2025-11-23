@@ -441,33 +441,20 @@
   object-fit: cover;
 }
 
-.pie-chart__legend {
+.pie-chart__badge-text {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 100%;
+  line-height: 1.2;
 }
 
-.legend-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.pie-chart__badge-symbol {
+  font-weight: 800;
+  letter-spacing: 0.01em;
 }
 
-.legend-color {
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  display: inline-block;
-}
-
-.legend-label {
-  font-weight: 600;
-}
-
-.legend-value {
+.pie-chart__badge-percentage {
   color: #5b6a7a;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .secondary-currency {
