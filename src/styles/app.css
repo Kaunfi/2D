@@ -377,11 +377,17 @@
   margin-bottom: 12px;
 }
 
+.stat-card__totals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
 .pie-chart {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .pie-chart svg {
@@ -393,6 +399,7 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .legend-row {
@@ -414,6 +421,11 @@
 
 .legend-value {
   color: #5b6a7a;
+  font-size: 13px;
+}
+
+.secondary-currency {
+  color: #7b8a9b;
   font-size: 13px;
 }
 

@@ -1,9 +1,17 @@
 import React, { useMemo } from 'react';
 
-function formatCurrency(value) {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'USD' }).format(
-    Number(value) || 0,
-  );
+const USD_TO_EUR_RATE = 0.92;
+
+function formatCurrency(value, currency = 'USD') {
+  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(Number(value) || 0);
+}
+
+function formatUsd(value) {
+  return formatCurrency(value, 'USD');
+}
+
+function formatEur(value) {
+  return formatCurrency((Number(value) || 0) * USD_TO_EUR_RATE, 'EUR');
 }
 
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
@@ -30,7 +38,10 @@ function PieChart({ title, data, total }) {
     <div className="stat-card">
       <div className="stat-card__header">
         <h3>{title}</h3>
-        <span className="metric-label">Total: {formatCurrency(total)}</span>
+        <div className="stat-card__totals">
+          <span className="metric-label">Total: {formatUsd(total)}</span>
+          <span className="secondary-currency">{formatEur(total)}</span>
+        </div>
       </div>
       {total <= 0 ? (
         <div className="muted stat-card__empty">Aucune donnée à afficher.</div>
@@ -81,7 +92,8 @@ function StatsTable({ rows }) {
             <th>Quantité</th>
             <th>Investi</th>
             <th>Prix actuel</th>
-            <th>Valeur actuelle</th>
+            <th>Valeur actuelle (USD)</th>
+            <th>Valeur actuelle (EUR)</th>
             <th>Variation 24h</th>
             <th>P/L</th>
           </tr>
@@ -101,15 +113,16 @@ function StatsTable({ rows }) {
                   </div>
                 </td>
                 <td>{Number(token.quantity) || 0}</td>
-                <td>{formatCurrency(invested)}</td>
-                <td>{token.currentPrice ? formatCurrency(token.currentPrice) : '—'}</td>
-                <td>{formatCurrency(currentValue)}</td>
+                <td>{formatUsd(invested)}</td>
+                <td>{token.currentPrice ? formatUsd(token.currentPrice) : '—'}</td>
+                <td>{formatUsd(currentValue)}</td>
+                <td>{formatEur(currentValue)}</td>
                 <td>
                   <span className={`chip ${token.change24h >= 0 ? 'chip--positive' : 'chip--negative'}`}>
                     {token.change24h ? `${token.change24h.toFixed(2)}%` : '0%'}
                   </span>
                 </td>
-                <td className={profit >= 0 ? 'positive' : 'negative'}>{formatCurrency(profit)}</td>
+                <td className={profit >= 0 ? 'positive' : 'negative'}>{formatUsd(profit)}</td>
               </tr>
             );
           })}
@@ -157,17 +170,20 @@ function StatsPage({ portfolio }) {
         <div className="totals">
           <div>
             <span className="metric-label">Valeur actuelle</span>
-            <strong>{formatCurrency(totals.currentValue)}</strong>
+            <strong>{formatUsd(totals.currentValue)}</strong>
+            <div className="secondary-currency">{formatEur(totals.currentValue)}</div>
           </div>
           <div>
             <span className="metric-label">Investi</span>
-            <strong>{formatCurrency(totals.investedValue)}</strong>
+            <strong>{formatUsd(totals.investedValue)}</strong>
+            <div className="secondary-currency">{formatEur(totals.investedValue)}</div>
           </div>
           <div>
             <span className="metric-label">P/L</span>
             <strong className={totals.profit >= 0 ? 'positive' : 'negative'}>
-              {formatCurrency(totals.profit)}
+              {formatUsd(totals.profit)}
             </strong>
+            <div className="secondary-currency">{formatEur(totals.profit)}</div>
           </div>
         </div>
       </div>
